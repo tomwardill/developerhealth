@@ -138,10 +138,11 @@ author = process.communicate()[0]
 
 payload = {
     'location': [str(location["coordinates"][0]), str(location["coordinates"][1])],
-    'filename': filename,
+    'photo': filename,
     'commit_message': commit_message,
     'author': author
 }
-files = {'filename': open(filename, 'rb')}
+files = {'photofile': open(filename, 'rb')}
 print str(payload)
-r = requests.post('http://localhost:5000/post/1', data = payload, files = files)
+r = requests.post('http://172.18.4.230:5000/post/1', data = payload, files = files)
+print r.text
