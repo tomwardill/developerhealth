@@ -114,26 +114,32 @@ import os
 
 import json
 
-#process = subprocess.Popen(["get-location", "-f", "json"], stdout=subprocess.PIPE)
-#exit_code = os.waitpid(process.pid, 0)
-#output = process.communicate()[0]
-#print "OUTPUT: " + output
+process = subprocess.Popen(["get-location", "-f", "json"], stdout=subprocess.PIPE)
+exit_code = os.waitpid(process.pid, 0)
+output = process.communicate()[0]
 
-#if output:
-#    try:
-#        location = json.loads(output)
-#    except:
-#        print "location failed, using default"
-#        location = '{ "type": "Point", "coordinates": [ 53.80156633, -1.54636951 ] }'
+if output:
+    try:
+        location = json.loads(output)
+    except:
+        print "location failed, using default"
+        location = { "type": "Point", "coordinates": [ 53.80156633, -1.54636951 ] }
+else:
+    print "location failed, using default"
+    location = { "type": "Point", "coordinates": [ 53.80156633, -1.54636951 ] }
 
-#print "location: " + str(location)
-
-#test = NSImageTest.alloc().init()
-#filename = test.main()
-
-#print filename
+test = NSImageTest.alloc().init()
+filename = test.main()
 
 process = subprocess.Popen("git log -n 1 HEAD --format=format:%s%n%b".split(" "), stdout=subprocess.PIPE)
 exit_code = os.waitpid(process.pid, 0)
 commit_message = process.communicate()[0]
-print output
+
+process = subprocess.Popen("git log -n 1 HEAD --format=format:%aN".split(" "), stdout=subprocess.PIPE)
+exit_code = os.waitpid(process.pid, 0)
+author = process.communicate()[0]
+
+print str(location["coordinates"])
+print filename
+print commit_message
+print author
