@@ -21,6 +21,8 @@ from Foundation import NSObject
 from Foundation import NSTimer
 from PyObjCTools import AppHelper
 
+import requests
+
 class NSImageTest(NSObject):
     
     filename = ""
@@ -114,17 +116,12 @@ import os
 
 import json
 
-process = subprocess.Popen(["get-location", "-f", "json"], stdout=subprocess.PIPE)
-exit_code = os.waitpid(process.pid, 0)
-output = process.communicate()[0]
+#process = subprocess.Popen(["get-location", "-f", "json"], stdout=subprocess.PIPE)
+#exit_code = os.waitpid(process.pid, 0)
+#output = process.communicate()[0]
 
-if output:
-    try:
-        location = json.loads(output)
-    except:
-        print "location failed, using default"
-        location = { "type": "Point", "coordinates": [ 53.80156633, -1.54636951 ] }
-else:
+output = ""
+if not output:
     print "location failed, using default"
     location = { "type": "Point", "coordinates": [ 53.80156633, -1.54636951 ] }
 
@@ -140,10 +137,11 @@ exit_code = os.waitpid(process.pid, 0)
 author = process.communicate()[0]
 
 payload = {
-    'location': location["coordinates"],
+    'location': [str(location["coordinates"][0]), str(location["coordinates"][1])],
     'filename': filename,
     'commit_message': commit_message,
     'author': author
 }
+files = {'filename': open(filename, 'rb')}
 print str(payload)
-print json.dumps(payload)
+r = requests.post('http://localhost:5000/post/1', data = payload, files = files)
