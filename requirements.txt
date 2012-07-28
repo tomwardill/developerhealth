@@ -2,9 +2,11 @@ Flask==0.9
 Jinja2==2.6
 Werkzeug==0.8.3
 ant==develop
+argparse==1.2.1
 distribute==0.6.28
 ipython==0.13
 msgpack-python==0.2.0
+pymongo==2.2.1
 pyserial==2.6
 pyusb==1.0.0a2
 readline==6.2.2
