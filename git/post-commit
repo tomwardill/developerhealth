@@ -139,7 +139,11 @@ process = subprocess.Popen("git log -n 1 HEAD --format=format:%aN".split(" "), s
 exit_code = os.waitpid(process.pid, 0)
 author = process.communicate()[0]
 
-print str(location["coordinates"])
-print filename
-print commit_message
-print author
+payload = {
+    'location': location["coordinates"],
+    'filename': filename,
+    'commit_message': commit_message,
+    'author': author
+}
+print str(payload)
+print json.dumps(payload)
