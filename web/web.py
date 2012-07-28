@@ -1,6 +1,7 @@
 from flask import Flask, request
 from pymongo import Connection
 import os
+import time
 
 app = Flask(__name__)
 
@@ -12,15 +13,21 @@ def main():
 def post(post_id):
     if request.method == 'POST':
         try: 
+            connection = Connection()
+            db = connection.developerhealth
+            # get the latest hrm
+            recent_hrm = db.hrm.find().sort('time', -1).limit(1).next()
             
             doc = {
                 'author': request.form['author'],
                 'location': request.form['location'],
                 'commit_message': request.form['commit_message'],
-                'photo': request.form['photo']
+                'photo': request.form['photo'],
+                'hrm': recent_hrm['value'],
+                'hrm_time': recent_hrm['time'],
+                'time': time.time()
             }
-            connection = Connection()
-            db = connection.developerhealth
+            
             db.payloads.insert(doc)
             
             
