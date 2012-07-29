@@ -11,7 +11,7 @@ app = Flask(__name__)
 @app.route('/')
 def main():
     
-    previous_day = datetime.now() - timedelta(hours = 6)
+    previous_day = datetime.now() - timedelta(hours = 10)
     timestamp = time.mktime(previous_day.timetuple())
     
     connection = Connection()
