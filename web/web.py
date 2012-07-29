@@ -2,12 +2,24 @@ from flask import Flask, request, render_template
 from pymongo import Connection
 import os
 import time
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
 @app.route('/')
 def main():
-    return "Hello World"
+    
+    previous_day = datetime.now() - timedelta(hours = 6)
+    timestamp = time.mktime(previous_day.timetuple())
+    
+    connection = Connection()
+    db = connection.developerhealth
+    hrm = []
+    for row in db.hrm.find({"time": {'$gt': timestamp}}):
+        hrm.append((row['value'], row['time'] * 1000))
+    print hrm
+    
+    return render_template('index.html', hrm = hrm)
     
 @app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
@@ -44,4 +56,6 @@ def post(post_id):
         return "post: " + str(post_id)
     
 if __name__ == "__main__":
+    #app.debug = True
     app.run(host="0.0.0.0")
+    #app.run()
