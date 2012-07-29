@@ -102,7 +102,7 @@
         
         MARKINGS = [
         {% for row in commits %}
-        { color: '#000', lineWidth: 1, xaxis: { from: {{ row['time'] * 1000 }}, to: {{ row['time'] * 1000 }} } },
+        { color: '#888', lineWidth: 1, xaxis: { from: {{ row['time'] * 1000 }}, to: {{ row['time'] * 1000 }} } },
         {% endfor %}
         ]
 
