@@ -104,6 +104,6 @@ def post(post_id):
         return "post: " + str(post_id)
     
 if __name__ == "__main__":
-    app.debug = True
-    #app.run(host="0.0.0.0")
-    app.run()
+    #app.debug = True
+    app.run(host="0.0.0.0")
+    #app.run()

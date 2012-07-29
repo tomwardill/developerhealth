@@ -7,7 +7,7 @@
   </div>
 
   
-  <div class="row">
+  <div id="commits" class="row">
       {% for commit in commits[:3] %}
       <div class="span4">
         <h2>{{ commit['author'] }}</h2>
@@ -67,7 +67,8 @@ $(function () {
                             data: COMMITS,
                             points: { show: true }
                         }], options);
-             });
+            });     
+             
          }
          
          $.ajax({
