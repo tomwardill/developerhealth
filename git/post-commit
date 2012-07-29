@@ -136,13 +136,21 @@ process = subprocess.Popen("git log -n 1 HEAD --format=format:%aN".split(" "), s
 exit_code = os.waitpid(process.pid, 0)
 author = process.communicate()[0]
 
+filejpg = "".join(filename[:-4])
+filejpg = filejpg + ".jpg"
+print filejpg
 payload = {
     'location': [str(location["coordinates"][0]), str(location["coordinates"][1])],
-    'photo': filename,
+    'photo': filejpg,
     'commit_message': commit_message,
     'author': author
 }
-files = {'photofile': open(filename, 'rb')}
+
+process = subprocess.Popen(("convert " + filename + " " + filejpg).split(" "), stdout=subprocess.PIPE)
+exit_code = os.waitpid(process.pid, 0)
+foo = process.communicate()[0]
+
+files = {'photofile': open(filejpg, 'rb')}
 print str(payload)
 r = requests.post('http://172.18.4.230:5000/post/1', data = payload, files = files)
 print r.text
