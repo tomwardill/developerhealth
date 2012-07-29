@@ -17,9 +17,12 @@ def main():
     hrm = []
     for row in db.hrm.find({"time": {'$gt': timestamp}}):
         hrm.append((row['value'], row['time'] * 1000))
-    print hrm
     
-    return render_template('index.html', hrm = hrm)
+    commits = []
+    for row in db.payloads.find({"time": {'$gt': timestamp}}).sort('time', -1):
+        commits.append(row)
+    
+    return render_template('index.html', hrm = hrm, commits = commits)
     
 @app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
