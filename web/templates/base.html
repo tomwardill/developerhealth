@@ -55,22 +55,8 @@
 
     <div class="container">
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div id="placeholder" class="hero-unit" style="width:900px;height:200px;">
-        <h1>A Graph will go here</h1>
-      </div>
-
-      
-      <div class="row">
-          {% for commit in commits[:3] %}
-          <div class="span4">
-            <h2>{{ commit['author'] }}</h2>
-            <p>{{ commit['commit_message'] }} <img src="../static/uploads/{{ commit['photo'] }}" height="75" style="float: right;"/></p>
-            <p><a class="btn" href="/details/{{ commit['_id'] }}">View details &raquo;</a></p>
-            
-          </div>
-          {% endfor %}
-        </div>
+      {% block content %}
+      {% endblock %}
 
       <hr>
 
@@ -87,87 +73,8 @@
     <script src="../static/js/jquery-1.7.2.min.js"></script>
     <script src="../static/js/flot/jquery.flot.js"></script>"
     
-    <script type="text/javascript">
-    $(function () {
-        HR = [
-        {% for row in hrm %}
-            [{{ row[1] }}, {{ row[0]}}],
-        {% endfor %}
-        ]
-        COMMITS = [
-        {% for row in commits %}
-            [{{ row['time'] * 1000 }}, {{ row['hrm']}}],
-        {% endfor %}
-        ]
-        
-        MARKINGS = [
-        {% for row in commits %}
-        { color: '#888', lineWidth: 1, xaxis: { from: {{ row['time'] * 1000 }}, to: {{ row['time'] * 1000 }} } },
-        {% endfor %}
-        ]
-
-        var plot = $.plot($("#placeholder"), [
-                {
-                    data: HR,
-                    lines: { show: true, fill: true }
-                },
-                {
-                    data: COMMITS,
-                    points: { show: true }
-                }], { grid: { hoverable: true, clickable: true, markings: MARKINGS }, xaxis: { mode: "time" }});
-                
-                function showTooltip(x, y, contents) {
-                        $('<div id="tooltip">' + contents + '</div>').css( {
-                            position: 'absolute',
-                            display: 'none',
-                            top: y + 5,
-                            left: x + 5,
-                            border: '1px solid #fdd',
-                            padding: '2px',
-                            'background-color': '#fee',
-                            opacity: 0.80
-                        }).appendTo("body").fadeIn(200);
-                    }
-
-                    var previousPoint = null;
-                    $("#placeholder").bind("plothover", function (event, pos, item) {
-                        $("#x").text(pos.x.toFixed(2));
-                        $("#y").text(pos.y.toFixed(2));
-
-                        
-                            if (item) {
-                                if (previousPoint != item.dataIndex) {
-                                    previousPoint = item.dataIndex;
-
-                                    $("#tooltip").remove();
-                                    var x = item.datapoint[0].toFixed(2),
-                                        y = item.datapoint[1].toFixed(2);
-                                    if (item.series.data.length < 100)
-                                    {
-                                        console.log(item)
-                                    showTooltip(item.pageX, item.pageY,
-                                                "foo");
-                                            }
-                                }
-                            }
-                            else {
-                                $("#tooltip").remove();
-                                previousPoint = null;            
-                            }
-                        
-                    });
-                
-       $("#placeholder").bind("plotclick", function (event, pos, item) {
-            if (item) {
-                if (item.series.data.length < 100) {
-                    console.log("Click")
-                    //$("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
-                    plot.highlight(item.series, item.datapoint);
-                }
-            }
-        });
-    });
-    </script>
+    {% block script %}
+    {% endblock %}
 
   </body>
 </html>
