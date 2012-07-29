@@ -7,7 +7,7 @@
   </div>
 
   
-  <div class="row">
+  <div id="commits" class="row">
       {% for commit in commits[:3] %}
       <div class="span4">
         <h2>{{ commit['author'] }}</h2>
@@ -67,6 +67,18 @@ $(function () {
                             data: COMMITS,
                             points: { show: true }
                         }], options);
+                        
+                var updates = [COMMITS[COMMITS.length-1], COMMITS[COMMITS.length-2], COMMITS[COMMITS.length-3]]
+                $.each(updates, function(index, input) {
+                    var div = $('div#commits')
+                    div.empty()
+                    var toAppend = $('<div class="span4"> \
+                        <h2>' + input["author"] + '</h2> \
+                        <p>' + input['commit_message'] + '<img src="../static/uploads/' + input['photo'] + '" height="75" style="float: right;"/></p> \
+                        <p><a class="btn" href="/details/' + input['_id'] + '">View details &raquo;</a></p> \
+                      </div>');
+                     div.append(toAppend);
+                });
              });
          }
          
