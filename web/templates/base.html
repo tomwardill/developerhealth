@@ -99,6 +99,12 @@
             [{{ row['time'] * 1000 }}, {{ row['hrm']}}],
         {% endfor %}
         ]
+        
+        MARKINGS = [
+        {% for row in commits %}
+        { color: '#000', lineWidth: 1, xaxis: { from: {{ row['time'] * 1000 }}, to: {{ row['time'] * 1000 }} } },
+        {% endfor %}
+        ]
 
         $.plot($("#placeholder"), [
                 {
@@ -108,7 +114,7 @@
                 {
                     data: COMMITS,
                     points: { show: true }
-                }], { xaxis: { mode: "time" }});
+                }], { grid: { hoverable: true, clickable: true, markings: MARKINGS }, xaxis: { mode: "time" }});
     });
     </script>
 
