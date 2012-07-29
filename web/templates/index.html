@@ -38,6 +38,12 @@ $(function () {
     { color: '#888', lineWidth: 1, xaxis: { from: {{ row['time'] * 1000 }}, to: {{ row['time'] * 1000 }} } },
     {% endfor %}
     ]
+    
+    IDS = [
+        {% for row in commits %}
+        "{{ row['_id'] }}",
+        {% endfor %}
+    ]
 
     var plot = $.plot($("#placeholder"), [
             {
@@ -77,9 +83,8 @@ $(function () {
                                     y = item.datapoint[1].toFixed(2);
                                 if (item.series.data.length < 100)
                                 {
-                                    console.log(item)
                                 showTooltip(item.pageX, item.pageY,
-                                            "foo");
+                                            IDS[item.dataIndex]);
                                         }
                             }
                         }
@@ -93,7 +98,7 @@ $(function () {
    $("#placeholder").bind("plotclick", function (event, pos, item) {
         if (item) {
             if (item.series.data.length < 100) {
-                console.log("Click")
+                document.location = document.location.origin + "/details/" + IDS[item.dataIndex]
                 //$("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
                 plot.highlight(item.series, item.datapoint);
             }

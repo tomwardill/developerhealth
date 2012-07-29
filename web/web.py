@@ -32,7 +32,8 @@ def details(detail_id):
     db = connection.developerhealth
     
     try:
-        time_id = float(detail_id)
+        time_id = float(detail_id) / 1000
+        print time_id
         result = db.payloads.find_one({'time': time_id})
     except:
         detail_id = ObjectId(detail_id)
