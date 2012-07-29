@@ -33,7 +33,7 @@ def post(post_id):
             
             path = os.path.dirname(os.path.abspath(__file__))
             filename = request.form['photo']
-            filename = os.path.join(path, filename)
+            filename = os.path.join(path, 'static/uploads/', filename)
             f = request.files['photofile']
             f.save(filename)
             return "SUCCESS"
