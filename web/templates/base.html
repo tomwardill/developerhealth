@@ -66,6 +66,7 @@
           <div class="span4">
             <h2>{{ commit['author'] }}</h2>
             <p>{{ commit['commit_message'] }} <img src="../static/uploads/{{ commit['photo'] }}" height="75" style="float: right;"/></p>
+            <p><a class="btn" href="/details/{{ commit['_id'] }}">View details &raquo;</a></p>
             
           </div>
           {% endfor %}
@@ -88,13 +89,26 @@
     
     <script type="text/javascript">
     $(function () {
-        d1 = [
+        HR = [
         {% for row in hrm %}
             [{{ row[1] }}, {{ row[0]}}],
         {% endfor %}
         ]
+        COMMITS = [
+        {% for row in commits %}
+            [{{ row['time'] * 1000 }}, {{ row['hrm']}}],
+        {% endfor %}
+        ]
 
-        $.plot($("#placeholder"), [ d1 ], { xaxis: { mode: "time" }});
+        $.plot($("#placeholder"), [
+                {
+                    data: HR,
+                    lines: { show: true, fill: true }
+                },
+                {
+                    data: COMMITS,
+                    points: { show: true }
+                }], { xaxis: { mode: "time" }});
     });
     </script>
 
