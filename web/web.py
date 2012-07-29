@@ -24,6 +24,10 @@ def main():
     
     return render_template('index.html', hrm = hrm, commits = commits)
     
+@app.route('/details/<string:detail_id')
+def details(detail_id):
+    pass
+    
 @app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
     if request.method == 'POST':

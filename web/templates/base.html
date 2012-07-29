@@ -84,7 +84,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="../static/js/jquery-1.7.2.min.js"></script>
     <script src="../static/js/flot/jquery.flot.js"></script>"
     
     <script type="text/javascript">
@@ -106,7 +106,7 @@
         {% endfor %}
         ]
 
-        $.plot($("#placeholder"), [
+        var plot = $.plot($("#placeholder"), [
                 {
                     data: HR,
                     lines: { show: true, fill: true }
@@ -115,6 +115,57 @@
                     data: COMMITS,
                     points: { show: true }
                 }], { grid: { hoverable: true, clickable: true, markings: MARKINGS }, xaxis: { mode: "time" }});
+                
+                function showTooltip(x, y, contents) {
+                        $('<div id="tooltip">' + contents + '</div>').css( {
+                            position: 'absolute',
+                            display: 'none',
+                            top: y + 5,
+                            left: x + 5,
+                            border: '1px solid #fdd',
+                            padding: '2px',
+                            'background-color': '#fee',
+                            opacity: 0.80
+                        }).appendTo("body").fadeIn(200);
+                    }
+
+                    var previousPoint = null;
+                    $("#placeholder").bind("plothover", function (event, pos, item) {
+                        $("#x").text(pos.x.toFixed(2));
+                        $("#y").text(pos.y.toFixed(2));
+
+                        
+                            if (item) {
+                                if (previousPoint != item.dataIndex) {
+                                    previousPoint = item.dataIndex;
+
+                                    $("#tooltip").remove();
+                                    var x = item.datapoint[0].toFixed(2),
+                                        y = item.datapoint[1].toFixed(2);
+                                    if (item.series.data.length < 100)
+                                    {
+                                        console.log(item)
+                                    showTooltip(item.pageX, item.pageY,
+                                                "foo");
+                                            }
+                                }
+                            }
+                            else {
+                                $("#tooltip").remove();
+                                previousPoint = null;            
+                            }
+                        
+                    });
+                
+       $("#placeholder").bind("plotclick", function (event, pos, item) {
+            if (item) {
+                if (item.series.data.length < 100) {
+                    console.log("Click")
+                    //$("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
+                    plot.highlight(item.series, item.datapoint);
+                }
+            }
+        });
     });
     </script>
 
