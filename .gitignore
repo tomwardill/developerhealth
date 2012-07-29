@@ -1,5 +1,6 @@
 *.py[co]
 *.ant
+*.bmp
 
 # Packages
 *.egg
