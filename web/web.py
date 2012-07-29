@@ -3,6 +3,7 @@ from pymongo import Connection
 from bson import ObjectId
 import os
 import time
+import json
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -17,13 +18,38 @@ def main():
     db = connection.developerhealth
     hrm = []
     for row in db.hrm.find({"time": {'$gt': timestamp}}):
-        hrm.append((row['value'], row['time'] * 1000))
+        hrm.append((row['value'], row['time'], row['_id']))
     
     commits = []
     for row in db.payloads.find({"time": {'$gt': timestamp}}).sort('time', -1):
         commits.append(row)
     
     return render_template('index.html', hrm = hrm, commits = commits)
+    
+@app.route('/data/hr/<string:update_id>')
+def dataHR(update_id):
+    connection = Connection()
+    db = connection.developerhealth
+    
+    update = db.hrm.find_one({'_id': ObjectId(update_id)})
+    update_time = update['time']
+    newer = []
+    for row in db.hrm.find({"time": {'$gt': update_time}}).sort('time', -1):
+        newer.append([row['time'], row['value'], str(row['_id'])])
+    return json.dumps(newer)
+    
+@app.route('/data/commit/<string:update_id>')
+def dataCommit(update_id):
+    connection = Connection()
+    db = connection.developerhealth
+    print update_id
+
+    update = db.payloads.find_one({'_id': ObjectId(update_id)})
+    update_time = update['time']
+    newer = []
+    for row in db.payloads.find({"time": {'$gt': update_time}}).sort('time', -1):
+        newer.append([row['time'], row['hrm'], str(row['_id'])])
+    return json.dumps(newer)
     
 @app.route('/details/<string:detail_id>')
 def details(detail_id):
@@ -41,6 +67,7 @@ def details(detail_id):
     print result
     
     return render_template('details.html', payload = result)
+    
     
 @app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
@@ -77,6 +104,6 @@ def post(post_id):
         return "post: " + str(post_id)
     
 if __name__ == "__main__":
-    #app.debug = True
-    app.run(host="0.0.0.0")
-    #app.run()
+    app.debug = True
+    #app.run(host="0.0.0.0")
+    app.run()

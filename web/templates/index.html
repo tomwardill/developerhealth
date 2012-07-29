@@ -24,26 +24,94 @@
 $(function () {
     HR = [
     {% for row in hrm %}
-        [{{ row[1] }}, {{ row[0]}}],
+        [{{ row[1] * 1000}}, {{ row[0] }}],
     {% endfor %}
-    ]
+    ];
+    HRID = [
+        {% for row in hrm %}
+           '{{ row[2] }}',
+       {% endfor %}
+    ];
     COMMITS = [
     {% for row in commits %}
         [{{ row['time'] * 1000 }}, {{ row['hrm']}}],
     {% endfor %}
-    ]
+    ];
     
     MARKINGS = [
     {% for row in commits %}
     { color: '#888', lineWidth: 1, xaxis: { from: {{ row['time'] * 1000 }}, to: {{ row['time'] * 1000 }} } },
     {% endfor %}
-    ]
+    ];
     
     IDS = [
         {% for row in commits %}
         "{{ row['_id'] }}",
         {% endfor %}
     ]
+
+    options = { grid: { hoverable: true, clickable: true, markings: MARKINGS }, xaxis: { mode: "time" }}
+
+    function fetchCommitData() {
+         
+         function onDataReceived(series) {
+             $.each(series, function(index, input) {
+                COMMITS.push([input[0] * 1000, input[1]])
+                IDS.push(input[2]) 
+                $.plot($("#placeholder"), [
+                        {
+                            data: HR,
+                            lines: { show: true, fill: true }
+                        },
+                        {
+                            data: COMMITS,
+                            points: { show: true }
+                        }], options);
+             });
+         }
+         
+         $.ajax({
+             url: "/data/commit/" + IDS[0],
+             method: 'GET',
+             dataType: 'json',
+             success: onDataReceived
+         })
+         
+         setTimeout(fetchCommitData, 1000)
+    }
+    
+    function fetchData() {
+         
+         function onDataReceived(series) {
+             $.each(series, function(index, input) {
+                HR.push([input[0] * 1000, input[1]])
+                HRID.push(input[2]) 
+                $.plot($("#placeholder"), [
+                        {
+                            data: HR,
+                            lines: { show: true, fill: true }
+                        },
+                        {
+                            data: COMMITS,
+                            points: { show: true }
+                        }], options);
+             });
+         }
+         
+         $.ajax({
+             url: "/data/hr/" + HRID[HRID.length -1],
+             method: 'GET',
+             dataType: 'json',
+             success: onDataReceived
+         })
+         
+         setTimeout(fetchData, 1000)
+    }
+    
+    //fetchCommitData();
+    
+    setTimeout(fetchData, 1000);
+    setTimeout(fetchCommitData, 1000);
 
     var plot = $.plot($("#placeholder"), [
             {
@@ -53,7 +121,7 @@ $(function () {
             {
                 data: COMMITS,
                 points: { show: true }
-            }], { grid: { hoverable: true, clickable: true, markings: MARKINGS }, xaxis: { mode: "time" }});
+            }], options);
             
             function showTooltip(x, y, contents) {
                     $('<div id="tooltip">' + contents + '</div>').css( {
