@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from pymongo import Connection
+from bson import ObjectId
 import os
 import time
 from datetime import datetime, timedelta
@@ -24,9 +25,21 @@ def main():
     
     return render_template('index.html', hrm = hrm, commits = commits)
     
-@app.route('/details/<string:detail_id')
+@app.route('/details/<string:detail_id>')
 def details(detail_id):
-    pass
+    
+    connection = Connection()
+    db = connection.developerhealth
+    
+    try:
+        time_id = float(detail_id)
+        result = db.payloads.find_one({'time': time_id})
+    except:
+        detail_id = ObjectId(detail_id)
+        result = db.payloads.find_one({'_id': detail_id})
+    print result
+    
+    return render_template('details.html', payload = result)
     
 @app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
